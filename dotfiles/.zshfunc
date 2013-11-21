@@ -1,3 +1,6 @@
 function nano(){
 	vim $@
 }
+function ctwi(){
+	ruby ~/ctwi/ctwi.rb $@
+}

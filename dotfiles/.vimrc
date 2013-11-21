@@ -1,7 +1,6 @@
 scriptencoding utf-8
 
-set nocompatible
-
+"Initialize
 if has('vim_starting')
   filetype plugin off
     filetype indent off
@@ -9,16 +8,17 @@ if has('vim_starting')
   endif
   call neobundle#rc(expand('~/.vim/bundle'))
 
-  NeoBundle 'git://github.com/kien/ctrlp.vim.git'
-  NeoBundle 'git://github.com/Shougo/neobundle.vim.git'
-  NeoBundle 'git://github.com/scrooloose/nerdtree.git'
-  NeoBundle 'git://github.com/scrooloose/syntastic.git'
+if filereadable(expand('~/.vim_neobundle'))
+	source ~/.vim_neobundle
+endif
 
+" Enable backspace
 set backspace=indent,eol,start
 
 "バックアップ系
 set nowritebackup
 set nobackup
+set noswapfile
 
 "クリップボードとか
 set clipboard+=unnamed
@@ -39,6 +39,15 @@ set smartcase
 set wrapscan
 set incsearch
 set hlsearch
+"検索後の強調表示をCtrl+Lで解除
+nnoremap <C-L> :nohl<CR><C-L>
+nnoremap <C-O> :VimFiler -split -simple -winwidth=35 -no-quit<CR><C-L>
+" 前回終了したカーソル行に移動
+autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g`\"" | endif
+
+" undo
+nnoremap <C-U> :undo<CR><C-U>
+nnoremap <C-R> :redo<CR><C-Y>
 
 "行数表示
 set number
@@ -46,6 +55,8 @@ set number
 set showmatch matchtime=1
 "タブサイズを4に
 set ts=4
+set tabstop=2
+set shiftwidth=2
 set autoindent
 set title
 
@@ -56,60 +67,35 @@ set showcmd
 
 set display=lastline
 
-syntax on
+"set tags = tags
+let Tlist_Ctags_Cmd = "/usr/bin/ctags"  "ctagsのコマンド
+let Tlist_Show_One_File = 1  " 現在表示中のファイルのみのタグしか表示しない
+let Tlist_Use_Right_Window = 1 "右側にtag listのウインドうを表示する
+let Tlist_Exit_OnlyWindow = 1 "taglistのウインドウだけならVimを閉じる
+nnoremap <C-K> :TlistToggle<CR><C-K> "Ctrl+Kでtaglistウインドウを開いたり閉じたり出来るショートカット
 
-"NeoBunddle
+" statusline
+set statusline=%t       "tail of the filename
+set statusline+=[%{strlen(&fenc)?&fenc:'none'}, "file encoding
+set statusline+=%{&ff}] "file format
+set statusline+=%h      "help file flag
+set statusline+=%m      "modified flag
+set statusline+=%r      "read only flag
+set statusline+=%y      "filetype
+set statusline+=%=      "left/right separator
+set statusline+=%c,     "cursor column
+set statusline+=%l/%L   "cursor line/total lines
+set statusline+=\ %P    "percent through file
 
-NeoBundleLazy 'Shougo/neosnippet', {
-\ 'autoload' : {
-\ 'commands' : ['NeoSnippetEdit', 'NeoSnippetSource'],
-\ 'filetypes' : 'snippet',
-\ 'insert' : 1,
-\ 'unite_sources' : ['snippet', 'neosnippet/user', 'neosnippet/runtime'],
-\ }}
- 
-NeoBundleLazy 'alpaca-tc/vim-endwise.git', {
-\ 'autoload' : {
-\ 'insert' : 1,
-\ }}
- 
-NeoBundleLazy 'edsono/vim-matchit', { 'autoload' : {
-\ 'filetypes': 'ruby',
-\ 'mappings' : ['nx', '%'] }}
- 
-NeoBundleLazy 'basyura/unite-rails', {
-\ 'depends' : 'Shougo/unite.vim',
-\ 'autoload' : {
-\ 'unite_sources' : [
-\ 'rails/bundle', 'rails/bundled_gem', 'rails/config',
-\ 'rails/controller', 'rails/db', 'rails/destroy', 'rails/features',
-\ 'rails/gem', 'rails/gemfile', 'rails/generate', 'rails/git', 'rails/helper',
-\ 'rails/heroku', 'rails/initializer', 'rails/javascript', 'rails/lib', 'rails/log',
-\ 'rails/mailer', 'rails/model', 'rails/rake', 'rails/route', 'rails/schema', 'rails/spec',
-\ 'rails/stylesheet', 'rails/view'
-\ ]
-\ }}
- 
-NeoBundleLazy 'alpaca-tc/neorspec.vim', {
-\ 'depends' : ['alpaca-tc/vim-rails', 'tpope/vim-dispatch'],
-\ 'autoload' : {
-\ 'commands' : ['RSpec', 'RSpecAll', 'RSpecCurrent', 'RSpecNearest', 'RSpecRetry']
-\ }}
- 
-NeoBundleLazy 'alpaca-tc/alpaca_tags', {
-\ 'depends': 'Shougo/vimproc',
-\ 'autoload' : {
-\ 'commands': ['TagsUpdate', 'TagsSet', 'TagsBundle']
-\ }}
- 
-NeoBundleLazy 'tsukkee/unite-tag', {
-\ 'depends' : ['Shougo/unite.vim'],
-\ 'autoload' : {
-\ 'unite_sources' : ['tag', 'tag/file', 'tag/include']
-\ }}
+" statusのカラースキーマ
+augroup InsertHook
+	autocmd!
+    autocmd InsertEnter * highlight StatusLine guifg=#ccdc90 guibg=#2E4340
+    autocmd InsertLeave * highlight StatusLine guifg=#2E4340 guibg=#ccdc90
+augroup END
 
-NeoBundle 'Shougo/neocomplcache'
-NeoBundle 'Shougo/neocomplcache-rsense'
+compiler ruby
+let ruby_space_errors=1
 
 " neocomplcache
 let g:neocomplcache_enable_at_startup = 1
@@ -124,6 +110,22 @@ endif
 
 let g:neocomplcache#sources#rsense#home_directory = '/opt/rsense-0.3'
 
-NeoBundle 'mattn/emmet-vim'
-NeoBundle 'kannokanno/previm'
-NeoBundle 'tyru/open-browser.vim'
+let g:previm_open_cmd = 'firefox'
+
+"nobeep
+set visualbell t_vb=
+set noerrorbells
+
+syntax enable
+set background=dark
+let g:solarized_termcolors=256
+let g:solarized_degrade=0
+let g:solarized_bold=1
+let g:solarized_underline=1
+let g:solarized_italic=1
+let g:solarized_termtrans=0
+let g:solarized_contrast="high"
+let g:solarized_visibility="high"
+colorscheme solarized
+"highlight Normal ctermbg=none
+

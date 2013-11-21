@@ -1,3 +1,4 @@
 zsh,grml-zsh-config,git,mercurial,ruby-gtk2,
 xorg-server,xorg-server-utils,xorg-xinit,curl,wget,
-net-tools,dnsutils,addusers,awesome,firefox,roxterm
+net-tools,dnsutils,addusers,awesome,firefox,roxterm,uim,
+cinnamon,nemo,cinnamon-setting-daemon,cinnamon-screensaver,gdm

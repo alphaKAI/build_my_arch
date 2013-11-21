@@ -196,10 +196,10 @@ fi
 #alias top10='print -l ${(o)history%% *} | uniq -c | sort -nr | head -n 10'
 
 ## Execute \kbd{./configure}
-#alias CO="./configure"
+alias CO="./configure"
 
 ## Execute \kbd{./configure --help}
-#alias CH="./configure --help"
+alias CH="./configure --help"
 
 ## miscellaneous code ##
 
@@ -284,15 +284,15 @@ fi
 #}
 
 ## print hex value of a number
-#hex() {
-#    emulate -L zsh
-#    if [[ -n "$1" ]]; then
-#        printf "%x\n" $1
-#    else
-#        print 'Usage: hex <number-to-convert>'
-#        return 1
-#    fi
-#}
+hex() {
+    emulate -L zsh
+    if [[ -n "$1" ]]; then
+        printf "%x\n" $1
+    else
+        print 'Usage: hex <number-to-convert>'
+        return 1
+    fi
+}
 
 ## log out? set timeout in seconds...
 ## ...and do not log out in some specific terminals:
@@ -335,6 +335,7 @@ source ~/.zshenv
 source ~/.zshfunc
 alias cd..='cd ..'
 export GISTY_DIR="$HOME/gists"
-xset -b
+#xset -b
 set bell-style visible
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 # END OF FILE #################################################################
